@@ -22,7 +22,8 @@ export class OracleDatabase implements INodeType {
       name: "Oracle Database",
     },
     inputs: ["main"],
-    outputs: ["main"],
+    outputs: ["main", "main"],
+    outputNames: ["success", "error"],
     credentials: [
       {
         name: "oracleCredentials",
@@ -101,12 +102,20 @@ export class OracleDatabase implements INodeType {
           },
         ],
       },
+      {
+        displayName: 'Continue On Error',
+        name: 'continueOnError',
+        type: 'boolean',
+        default: false,
+        description: 'Whether to continue on error or fail the workflow',
+      },
     ],
   };
 
-  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-    if (typeof String.prototype.replaceAll === "undefined") {
-      String.prototype.replaceAll = function (match, replace) {
+  execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+    return new Promise(async (resolve, reject) => {
+      if (typeof String.prototype.replaceAll === "undefined") {
+        String.prototype.replaceAll = function (match, replace) {
         return this.replace(new RegExp(match, 'g'), () => replace);
       }
     }
@@ -124,7 +133,7 @@ export class OracleDatabase implements INodeType {
     );
     const connection = await db.getConnection();
 
-    let returnItems = [];
+    let returnItems: INodeExecutionData[] = [];
 
     try {
       //get query
@@ -190,7 +199,16 @@ export class OracleDatabase implements INodeType {
       );
 
     } catch (error) {
-      throw new NodeOperationError(this.getNode(), error.message);
+      if (this.continueOnFail()) {
+        const errorData = this.helpers.returnJsonArray({
+          error: error.message,
+          stack: error.stack,
+        });
+        const successData = await this.prepareOutputData([]);
+        const errorDataResolved = await this.prepareOutputData(errorData);
+        resolve([successData[0], errorDataResolved[0]]);
+      }
+      reject(new NodeOperationError(this.getNode(), error.message));
     } finally {
       if (connection) {
         try {
@@ -203,7 +221,10 @@ export class OracleDatabase implements INodeType {
       }
     }
 
-    return this.prepareOutputData(returnItems);
+      const successData = await this.prepareOutputData(returnItems);
+      const errorData = await this.prepareOutputData([]);
+      resolve([successData[0], errorData[0]]);
+    });
   }
 }
 
