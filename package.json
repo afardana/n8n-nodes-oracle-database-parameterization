@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-oracle-database-parameterization",
-  "version": "1.1.4",
+  "version": "1.1.0",
   "description": "",
   "keywords": [
     "n8n-community-node-package",
@@ -9,12 +9,12 @@
   "license": "MIT",
   "homepage": "",
   "author": {
-    "name": "Joshua Griffin",
-    "email": "josh.griff00@gmail.com"
+    "name": "Angga Reza Fardana",
+    "email": "angga@fardana.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jgriffin1/n8n-nodes-oracle-database-parameterization.git"
+    "url": "https://github.com/afardana/n8n-nodes-oracle-database-parameterization.git"
   },
   "main": "index.js",
   "scripts": {

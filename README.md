@@ -2,7 +2,14 @@
 
 [Oracle](https://docs.oracle.com/en/database/oracle/oracle-database/) database node for n8n
 
-Forked from https://www.npmjs.com/package/n8n-nodes-oracle-database with the intent of adding parameterization funcationality.
+Forked from https://www.npmjs.com/package/n8n-nodes-oracle-database with the intent of adding parameterization functionality and aligning with n8n's Postgres "Execute a SQL query" behaviour.
+
+## Features
+
+- Parameterized SQL with optional automatic expansion for `IN (...)` clauses
+- Sanitizes trailing semicolons and prevents multi-statement execution per item
+- Returns Oracle driver metadata alongside `rows`
+- Errors bubble up as `NodeOperationError` objects; if `Continue On Fail` is enabled the node emits an error payload for that item on the single output stream
 
 ## Normal Query Example![1708469710894](image/README/1708469710894.png)
 
