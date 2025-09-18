@@ -227,7 +227,6 @@ class OracleDatabaseV1 implements INodeType {
           returnItems.push({
             json: {
               message: errorInstance.message,
-              item: { ...items[itemIndex].json },
               error: { ...errorInstance },
             },
             pairedItem: { item: itemIndex },
